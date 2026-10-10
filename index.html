@@ -202,7 +202,7 @@ body.runback .hp img:not(.mgt){animation:run .2s linear infinite}
 .pb.tb{width:46px;height:46px;pointer-events:auto}.pb.tb svg{width:22px;height:22px}
 .lbg{position:relative;overflow:hidden;width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--mus);border:2px solid var(--ink);border-radius:4px;cursor:pointer;padding:0;box-shadow:2px 2px 0 var(--ink);transition:transform .26s cubic-bezier(.3,1.7,.5,1),box-shadow .26s}
 .lbg svg{width:16px;height:16px;fill:var(--ink)}.lbg:active{transform:translate(2px,2px) scale(.9);box-shadow:none;transition-duration:.06s}
-#gfM{z-index:41}
+#gfM{z-index:41}#gtM{z-index:42}
 </style>
 </head>
 <body>
@@ -287,7 +287,7 @@ body.runback .hp img:not(.mgt){animation:run .2s linear infinite}
 <div class="ov" id="codeM"><div class="pan"><h4>Чит-код</h4><input id="codeIn" placeholder="введи код" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="row"><button class="buy" id="codeOk">Ввести</button><button class="buy sec" id="codeX">Закрыть</button></div><p id="codeMsg"></p></div></div>
 <div class="ov" id="admM"><div class="pan adm"><h4>Админ-панель</h4>
 <label>Монеты</label><div class="row"><input id="aCoins" placeholder="сколько" inputmode="decimal"><button class="buy" id="aAdd">Добавить</button><button class="buy sec" id="aSet">Задать</button></div>
-<label>Кликнуть за тебя</label><div class="row"><input id="aClk" placeholder="сколько кликов" inputmode="numeric"><button class="buy" id="aClkGo">Кликнуть</button></div>
+<label>Кликнуть за тебя</label><div class="row"><input id="aClk" placeholder="сколько монет" inputmode="numeric"><button class="buy" id="aClkGo">Кликнуть</button></div>
 <label>Помощь чекунца (0–10)</label><div class="row"><input id="aH" placeholder="уровень" inputmode="numeric"><button class="buy" id="aHset">Задать</button></div>
 <label>Хаммам (0–1000)</label><div class="row"><input id="aM" placeholder="уровень" inputmode="numeric"><button class="buy" id="aMset">Задать</button></div>
 <label>Переключатели</label><div class="row"><button class="buy" id="aX2"></button><button class="buy" id="aMogg"></button><button class="buy" id="aHeat"></button><button class="buy" id="aMax">Всё на максимум</button><button class="buy sec" id="aReset">Сбросить мои коды</button></div>
@@ -297,7 +297,8 @@ body.runback .hp img:not(.mgt){animation:run .2s linear infinite}
 <label>Прибавка к клику: <b id="mgVal"></b></label><input type="range" id="mgRange" min="5000" max="10000" step="500">
 <div class="row"><button class="buy sec" id="mgX">Закрыть</button></div></div></div>
 <div class="ov" id="lbM"><div class="pan"><h4>Таблица лидеров</h4><div class="row"><input id="lbQ" placeholder="найти игрока по нику" autocomplete="off"><button class="buy" id="lbGo">Найти</button></div><div id="lbList"></div><p id="lbMe"></p><div class="row"><button class="buy" id="lbRef">Обновить</button><button class="buy sec" id="lbX">Закрыть</button></div></div></div>
-<div class="ov" id="gfM"><div class="pan"><h4>Подарить клики</h4><p style="margin:0 0 10px;font-weight:700">Игроку: <span id="gfWho"></span></p><input id="gfN" placeholder="сколько кликов" inputmode="numeric" autocomplete="off"><p id="gfCost" style="margin:0 0 10px;font-size:13px"></p><div class="row"><button class="buy" id="gfSend">Подарить</button><button class="buy sec" id="gfX">Отмена</button></div><p id="gfMsg" style="margin:0;font-weight:700;font-size:13px"></p></div></div>
+<div class="ov" id="gfM"><div class="pan"><h4>Подарить монеты</h4><p style="margin:0 0 10px;font-weight:700">Игроку: <span id="gfWho"></span></p><input id="gfN" placeholder="сколько кликов" inputmode="numeric" autocomplete="off"><p id="gfCost" style="margin:0 0 10px;font-size:13px"></p><div class="row"><button class="buy" id="gfSend">Подарить</button><button class="buy sec" id="gfX">Отмена</button></div><p id="gfMsg" style="margin:0;font-weight:700;font-size:13px"></p></div></div>
+<div class="ov" id="gtM"><div class="pan"><h4>Тебе подарили монеты</h4><div id="gtList"></div><p id="gtTot" style="font-weight:700;margin:8px 0 10px"></p><div class="row"><button class="buy" id="gtOk">Отлично</button></div></div></div>
 <div class="toast" id="toast"></div>
 <div id="max"><div class="box"><small id="maxWhat"></small><h3>ВЫ ДОСТИГЛИ МАКСИМАЛЬНОЙ СУММЫ КОТОРУЮ МОЖНО ПОЛУЧИТЬ</h3><p>нажми, чтобы продолжить</p></div></div>
 
@@ -491,26 +492,30 @@ async function lbLoad(){const L=$('lbList'),m=$('lbMe'),q=$('lbQ').value.trim();
    const s=document.createElement('div');s.className='lbs';s.textContent=fmt(r.score);
    row.append(n,a,t,s);
    if(r.me||!r.pid){const sp=document.createElement('div');sp.style.cssText='width:34px;flex:none';row.appendChild(sp)}
-   else{const g=document.createElement('button');g.className='lbg';g.innerHTML=IGIFT;g.setAttribute('aria-label','Подарить клики');g.onclick=()=>gfOpen(r);row.appendChild(g)}
+   else{const g=document.createElement('button');g.className='lbg';g.innerHTML=IGIFT;g.setAttribute('aria-label','Подарить монеты');g.onclick=()=>gfOpen(r);row.appendChild(g)}
    L.appendChild(row)});
   if(d.rank&&!q)m.textContent='Твоё место: #'+d.rank+' · '+fmt(d.score)+' монет'}
  catch(e){L.textContent='Не удалось загрузить таблицу'}}
-function gfCost(){const n=Math.floor(+$('gfN').value.replace(/[\s_,]/g,''))||0;$('gfCost').textContent='Спишется: '+fmt(n*clickVal())+' монет (1 клик = '+fmt(clickVal())+')'}
+function gfCost(){const n=Math.floor(+$('gfN').value.replace(/[\s_,]/g,''))||0;$('gfCost').textContent='Твой баланс: '+Math.floor(S.coins).toLocaleString('ru-RU')+' монет'+(n?' → останется '+Math.max(0,Math.floor(S.coins-n)).toLocaleString('ru-RU'):'')}
 function gfOpen(r){gfTo=r;$('gfWho').textContent=r.name;$('gfN').value='';$('gfMsg').textContent='';gfCost();$('gfM').classList.add('on')}
 async function gfSend(){const n=Math.floor(+$('gfN').value.replace(/[\s_,]/g,'')),say=t=>{$('gfMsg').textContent=t};
- if(!(n>=1))return say('Введи число кликов');const cost=n*clickVal();if(S.coins<cost)return say('Не хватает монет');
+ if(!(n>=1))return say('Введи сумму');if(S.coins<n)return say('Не хватает монет');
  $('gfSend').disabled=true;
- try{const d=await callApi('/gift',{to:gfTo.pid,clicks:n,score:Math.floor(S.coins-cost)});
-  if(d.ok){S.coins-=cost;save();ui();say('Подарено '+fmt(n)+' кликов: '+d.to);setTimeout(()=>$('gfM').classList.remove('on'),1300)}
-  else say({amount:'Слишком большое число',nouser:'Игрок не найден',self:'Нельзя дарить себе',rate:'Слишком много подарков, подожди'}[d.error]||'Ошибка')}
+ try{const d=await callApi('/gift',{to:gfTo.pid,amount:n,score:Math.floor(S.coins-n)});
+  if(d.ok){S.coins-=n;save();ui();say('Отправлено '+n.toLocaleString('ru-RU')+' монет: '+d.to);setTimeout(()=>$('gfM').classList.remove('on'),1300)}
+  else say({amount:'Неверная сумма',nouser:'Игрок не найден',self:'Нельзя дарить себе',rate:'Слишком много подарков, подожди'}[d.error]||'Ошибка')}
  catch(e){say('Нет связи с сервером')}
  $('gfSend').disabled=false}
+let gtSum=0;
 async function claimGifts(){if(!API_URL||!(TW&&TW.initData))return;
- try{const d=await callApi('/claim',{});if(!d.ok||!d.gifts||!d.gifts.length)return;let tot=0;const who=[];d.gifts.forEach(g=>{tot+=g.clicks;if(!who.includes(g.from))who.push(g.from)});
-  const add=tot*clickVal();S.coins+=add;save();ui();toast('Подарок: '+fmt(tot)+' кликов от '+who.slice(0,2).join(', ')+' (+'+fmt(add)+')')}catch(e){}}
+ try{const d=await callApi('/claim',{});if(!d.ok||!d.gifts||!d.gifts.length)return;let tot=0;
+  d.gifts.forEach(g=>{tot+=g.amount;const r=document.createElement('div');r.className='lbr';r.innerHTML='<div class="lbt"></div><div class="lbs"></div>';r.children[0].textContent=g.from;r.children[1].textContent='+'+Math.floor(g.amount).toLocaleString('ru-RU');$('gtList').appendChild(r)});
+  S.coins+=tot;gtSum+=tot;save();ui();postScore(true);
+  $('gtTot').textContent='Всего: +'+Math.floor(gtSum).toLocaleString('ru-RU')+' монет';$('gtM').classList.add('on')}catch(e){}}
+$('gtOk').onclick=()=>{$('gtM').classList.remove('on');$('gtList').innerHTML='';gtSum=0};
 $('lbGo').onclick=lbLoad;$('lbQ').addEventListener('keydown',e=>{if(e.key==='Enter')lbLoad()});
 $('gfN').oninput=gfCost;$('gfSend').onclick=gfSend;$('gfX').onclick=()=>$('gfM').classList.remove('on');
-setTimeout(claimGifts,2500);setInterval(claimGifts,60000);
+setTimeout(claimGifts,1200);setInterval(claimGifts,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)claimGifts()});
 $('pLb').onclick=()=>{$('lbM').classList.add('on');lbLoad()};
 $('lbRef').onclick=lbLoad;$('lbX').onclick=()=>$('lbM').classList.remove('on');
 setInterval(()=>postScore(false),45000);
